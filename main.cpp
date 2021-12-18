@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QtWebView/QtWebView>
+#include <QQmlApplicationEngine>
 #include <QQuickView>
 #include <QQmlContext>
 #include <QQmlEngine>
@@ -13,16 +14,13 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    QQuickView *view = new QQuickView;
-    auto *context = view->rootContext();
-    auto engine = view->engine();
+    auto engine = new QQmlApplicationEngine("qrc:/main.qml");
+    auto *context = engine->rootContext();
 
     TranslatorsModel model(engine);
     context->setContextProperty("translatorsModel", &model);
 
     QObject::connect(&model, &TranslatorsModel::reloadTranslations, engine, &QQmlEngine::retranslate);
-
-    view->setSource(QUrl("qrc:/main.qml"));
 
     return app.exec();
 }
